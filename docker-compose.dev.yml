@@ -1,0 +1,55 @@
+version: "3.7"
+
+networks:
+    local:
+
+services:
+    nginx:
+        container_name: nginx
+        image: nginx:stable
+        ports:
+            - 81:80
+        volumes:
+            - ./app:/var/www/html
+            - ./nginx/log:/var/log/nginx
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - local
+        depends_on:
+            - php
+            - mysql
+    php:
+        image: herdanis/php7.4fpm-composer-laravel:1.0
+        container_name: php
+        volumes:
+            - ./app:/var/www/html
+        networks:
+            - local
+        restart: unless-stopped
+    postgres:
+        image: postgres
+        container_name: postgres
+        restart: unless-stopped
+        tty: true
+        ports: 
+            - 5432:5432
+        volumes: 
+            - ./pgsql:/var/lib/postgresql/data
+        environment: 
+            POSTGRES_USER: docker
+            POSTGRES_PASSWORD: 123
+        networks:
+            - local
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin
+        ports: 
+            - 51:5050
+        networks: 
+            - local
+        environment: 
+            PGADMIN_DEFAULT_EMAIL: docker@localhost
+            PGADMIN_DEFAULT_PASSWORD: 123
+            PGADMIN_LISTEN_PORT: 5050
+        depends_on: 
+            - postgres
