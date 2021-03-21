@@ -1,7 +1,6 @@
 /nginx/log/*
 /nginx/default.conf
 /php/php.ini
-/mysql/*
 /pgsql/*
 /app/*
 .DS_Store
